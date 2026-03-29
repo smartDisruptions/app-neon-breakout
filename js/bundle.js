@@ -936,6 +936,38 @@ function getShapeForLevel(level) {
   return 'eye';
 }
 
+function getShieldGaps(shapeName) {
+  switch (shapeName) {
+    case 'triangle':
+      return [
+        { angle: Math.PI * 0.5, width: 0.9 },
+        { angle: Math.PI * 1.5, width: 0.9 },
+      ];
+    case 'hexagon':
+      return [
+        { angle: Math.PI * 0.25, width: 0.7 },
+        { angle: Math.PI * 1.25, width: 0.7 },
+      ];
+    case 'eye':
+      return [
+        { angle: Math.PI * 1.5, width: 0.9 },
+      ];
+    default:
+      return [];
+  }
+}
+
+function isInShieldGap(angle, boss) {
+  const gaps = getShieldGaps(boss.shape);
+  for (const gap of gaps) {
+    const gapCenter = gap.angle + boss.rotation;
+    let diff = angle - gapCenter;
+    diff = ((diff + Math.PI) % (Math.PI * 2) + Math.PI * 2) % (Math.PI * 2) - Math.PI;
+    if (Math.abs(diff) < gap.width / 2) return true;
+  }
+  return false;
+}
+
 function getBossHP(level) {
   if (level <= 3) return 3;
   if (level <= 6) return 4;
@@ -1009,13 +1041,16 @@ function ballBossCollision(ball, boss) {
     return;
   }
 
-  // Bounce off wireframe shell
+  // Bounce off wireframe shell (skip if ball is in a gap)
   if (Math.abs(dist - boss.radius) < ball.r + 3 && dist > 0) {
-    const nx = dx / dist, ny = dy / dist;
-    const dot = ball.vx * nx + ball.vy * ny;
-    if (dot < 0) {
-      ball.vx -= 2 * dot * nx;
-      ball.vy -= 2 * dot * ny;
+    const ballAngle = Math.atan2(dy, dx);
+    if (!isInShieldGap(ballAngle, boss)) {
+      const nx = dx / dist, ny = dy / dist;
+      const dot = ball.vx * nx + ball.vy * ny;
+      if (dot < 0) {
+        ball.vx -= 2 * dot * nx;
+        ball.vy -= 2 * dot * ny;
+      }
     }
   }
 }
@@ -1042,19 +1077,33 @@ function drawBoss(ctx, drawGlowFn) {
 
   ctx.save();
 
-  // Wireframe shape
+  // Wireframe shape with gaps
   ctx.strokeStyle = '#0ff';
   ctx.lineWidth = 1.5;
   ctx.save();
   ctx.translate(boss.x, boss.y);
   ctx.rotate(boss.rotation);
   const verts = boss.shapeDef.vertices(0, 0, boss.radius);
+  const gaps = getShieldGaps(boss.shape);
   ctx.beginPath();
-  for (let i = 0; i < verts.length; i++) {
-    if (i === 0) ctx.moveTo(verts[i].x, verts[i].y);
-    else ctx.lineTo(verts[i].x, verts[i].y);
+  let penDown = false;
+  const totalVerts = verts.length;
+  for (let i = 0; i <= totalVerts; i++) {
+    const v = verts[i % totalVerts];
+    const angle = Math.atan2(v.y, v.x);
+    let inGap = false;
+    for (const gap of gaps) {
+      let diff = angle - gap.angle;
+      diff = ((diff + Math.PI) % (Math.PI * 2) + Math.PI * 2) % (Math.PI * 2) - Math.PI;
+      if (Math.abs(diff) < gap.width / 2) { inGap = true; break; }
+    }
+    if (inGap) {
+      penDown = false;
+    } else {
+      if (!penDown) { ctx.moveTo(v.x, v.y); penDown = true; }
+      else ctx.lineTo(v.x, v.y);
+    }
   }
-  ctx.closePath();
   ctx.stroke();
   ctx.restore();
 
@@ -1357,54 +1406,9 @@ function captureHighlight(triggerLabel) {
       if (blob) {
         captures.push(blob);
         if (captures.length > 5) captures.shift();
-        lastShareBlob = blob;
-        showShareButton();
       }
     }, 'image/png');
   });
-}
-
-function showShareButton() {
-  shareButtonTimer = Date.now() + 5000;
-  const btn = document.getElementById('shareBtn');
-  if (btn) {
-    btn.style.display = 'block';
-    btn.style.opacity = '1';
-    setTimeout(() => {
-      btn.style.opacity = '0';
-      setTimeout(() => { btn.style.display = 'none'; }, 300);
-    }, 4700);
-  }
-}
-
-function shareScreenshot() {
-  if (!lastShareBlob) return;
-  const file = new File([lastShareBlob], 'neon-breakout.png', { type: 'image/png' });
-  if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
-    navigator.share({ files: [file], title: 'Neon Breakout' }).catch(() => {});
-    return;
-  }
-  if (navigator.clipboard && navigator.clipboard.write) {
-    navigator.clipboard.write([
-      new ClipboardItem({ 'image/png': lastShareBlob })
-    ]).then(() => {
-      showToast('Screenshot copied!');
-    }).catch(() => {
-      downloadFallback();
-    });
-    return;
-  }
-  downloadFallback();
-}
-
-function downloadFallback() {
-  if (!lastShareBlob) return;
-  const url = URL.createObjectURL(lastShareBlob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = 'neon-breakout.png';
-  a.click();
-  URL.revokeObjectURL(url);
 }
 
 function showToast(msg) {
@@ -1605,27 +1609,6 @@ function draw() {
       drawGlow(b.x, b.y, 20, '#f0f', 0.4 + Math.sin(Date.now() * 0.01) * 0.2);
     }
   }
-  if (game.curveActive && game.paddle.vx && game.balls.length > 0) {
-    const b = game.balls[0];
-    let simX = b.x, simY = b.y, simVx = b.vx, simVy = b.vy;
-    const curveForce = game.paddle.vx * 0.015;
-    ctx.globalAlpha = 0.2;
-    ctx.fillStyle = defaultBallGlow;
-    for (let step = 0; step < 25; step++) {
-      simVx += curveForce;
-      simX += simVx;
-      simY += simVy;
-      if (simX < 0 || simX > W) simVx = -simVx;
-      if (simY < 0) simVy = -simVy;
-      if (simY > H) break;
-      if (step % 2 === 0) {
-        ctx.beginPath();
-        ctx.arc(simX, simY, 2, 0, Math.PI * 2);
-        ctx.fill();
-      }
-    }
-    ctx.globalAlpha = 1;
-  }
   const px = game.paddle.x - game.paddle.w / 2;
   const isWide = game.activePowers.wide && Date.now() < game.activePowers.wide;
   const padColor = isWide ? '#00e5ff' : '#fff';
@@ -1707,9 +1690,6 @@ cvs.addEventListener('touchmove', function(e) {
   const touch = e.touches[0];
   const rect = cvs.getBoundingClientRect();
   game.mouseX = (touch.clientX - rect.left) * (W / rect.width);
-  if (touchStartTime && Date.now() - touchStartTime > 300) {
-    game.curveActive = true;
-  }
 }, { passive: false });
 
 cvs.addEventListener('touchstart', function(e) {
@@ -1732,7 +1712,6 @@ cvs.addEventListener('touchstart', function(e) {
 }, { passive: false });
 
 cvs.addEventListener('touchend', function(e) {
-  game.curveActive = false;
   touchStartTime = 0;
 }, { passive: false });
 
@@ -1761,10 +1740,6 @@ document.addEventListener('keydown', function(e) {
     startGameCallback();
     return;
   }
-  if (e.code === 'Space') {
-    e.preventDefault();
-    game.curveActive = true;
-  }
   if (e.code === 'KeyE') {
     if (game.state === 'playing') activateAbility();
   }
@@ -1780,11 +1755,6 @@ document.addEventListener('keydown', function(e) {
   }
 });
 
-document.addEventListener('keyup', function(e) {
-  if (e.code === 'Space') {
-    game.curveActive = false;
-  }
-});
 
 function updateMuteIcon() {
   const icon = document.getElementById('muteIcon');
@@ -1838,9 +1808,6 @@ function update() {
     if (b.stuck) continue;
     b.trail.push({ x: b.x, y: b.y });
     if (b.trail.length > 12) b.trail.shift();
-    if (game.curveActive && game.paddle.vx) {
-      b.vx += game.paddle.vx * 0.015;
-    }
     b.x += b.vx;
     b.y += b.vy;
     if (b.x - b.r < 0) { b.x = b.r; b.vx = Math.abs(b.vx); }
@@ -2000,9 +1967,6 @@ function startGame() {
   AudioEngine.init();
   AudioEngine.startBeat();
 }
-
-// Expose shareScreenshot for the inline onclick in HTML
-window.shareScreenshot = shareScreenshot;
 
 setStartGameCallback(startGame);
 requestAnimationFrame(loop);
