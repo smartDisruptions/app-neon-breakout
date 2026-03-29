@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>NEON BREAKOUT</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;500;700&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #05050a;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    height: 100dvh;
+    font-family: 'Rajdhani', sans-serif;
+    cursor: default;
+    touch-action: none;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+
+  #wrap {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-width: 100vw;
+    max-height: 100vh;
+    max-height: 100dvh;
+  }
+
+  #hud {
+    width: 800px;
+    max-width: 100vw;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    padding: 0 10px 8px;
+    user-select: none;
+  }
+
+  #hud .label {
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 300;
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: #555;
+  }
+
+  #hud .value {
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 900;
+    font-size: 22px;
+    color: #fff;
+    text-shadow: 0 0 15px currentColor;
+  }
+
+  #hud .score-group .value { color: #0ff; }
+  #hud .combo-group .value { color: #f0f; }
+  #hud .lives-group .value { color: #f44; }
+
+  #gameCanvas {
+    border: 1px solid #111;
+    border-radius: 4px;
+    box-shadow:
+      0 0 40px rgba(0, 255, 255, 0.05),
+      inset 0 0 80px rgba(0, 0, 0, 0.8);
+    max-width: 100vw;
+    max-height: calc(100dvh - 50px);
+    object-fit: contain;
+  }
+
+  @media (max-width: 820px) {
+    #hud .label { font-size: 9px; letter-spacing: 2px; }
+    #hud .value { font-size: 16px; }
+    #overlayTitle { font-size: 28px !important; letter-spacing: 3px !important; }
+    #overlaySub { font-size: 12px !important; letter-spacing: 4px !important; }
+    #overlayPrompt { font-size: 11px !important; letter-spacing: 3px !important; }
+    #overlaySub.final-score { font-size: 20px !important; }
+  }
+
+  #overlay {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.4s;
+  }
+
+  #overlay.visible {
+    pointer-events: auto;
+    opacity: 1;
+  }
+
+  #overlayTitle {
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 900;
+    font-size: 52px;
+    color: #0ff;
+    text-shadow: 0 0 30px #0ff, 0 0 60px #0ff, 0 0 120px rgba(0,255,255,0.3);
+    letter-spacing: 6px;
+    margin-bottom: 8px;
+  }
+
+  #overlaySub {
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 300;
+    font-size: 16px;
+    letter-spacing: 8px;
+    text-transform: uppercase;
+    color: #888;
+    margin-bottom: 40px;
+  }
+
+  #overlaySub.final-score {
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 700;
+    font-size: 28px;
+    color: #0ff;
+    text-shadow: 0 0 20px #0ff;
+    letter-spacing: 2px;
+    text-transform: none;
+  }
+
+  #overlayPrompt {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 13px;
+    letter-spacing: 4px;
+    color: #f0f;
+    animation: pulse 1.8s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 0.4; }
+    50% { opacity: 1; }
+  }
+</style>
+</head>
+<body>
+
+<div id="wrap">
+  <div id="hud">
+    <div class="score-group">
+      <div class="label">Score</div>
+      <div class="value" id="scoreVal">0</div>
+    </div>
+    <div class="combo-group">
+      <div class="label">Combo</div>
+      <div class="value" id="comboVal">x1</div>
+    </div>
+    <div class="lives-group">
+      <div class="label">Lives</div>
+      <div class="value" id="livesVal">3</div>
+    </div>
+    <div id="muteIcon" style="cursor:pointer;font-size:16px;opacity:0.6;user-select:none;">🔊</div>
+  </div>
+  <canvas id="gameCanvas" width="800" height="560"></canvas>
+  <div id="shareBtn" style="display:none;position:absolute;bottom:60px;right:20px;background:#0ff;color:#000;font-family:Orbitron;font-size:11px;padding:8px 16px;border-radius:4px;cursor:pointer;z-index:20;transition:opacity 0.3s;" onclick="shareScreenshot()">SHARE</div>
+  <div id="toast" style="position:absolute;bottom:100px;left:50%;transform:translateX(-50%);background:#111;color:#0ff;font-family:Rajdhani;font-size:14px;padding:8px 20px;border-radius:4px;border:1px solid #0ff33;opacity:0;transition:opacity 0.3s;z-index:20;pointer-events:none;"></div>
+  <div id="overlay" class="visible">
+    <div id="overlayTitle">NEON BREAKOUT</div>
+    <div id="overlaySub">Brick Breaker</div>
+    <div id="overlayPrompt">CLICK TO START</div>
+  </div>
+</div>
+
+<script src="js/bundle.js"></script>
+</body>
+</html>

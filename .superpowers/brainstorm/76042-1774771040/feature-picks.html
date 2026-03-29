@@ -1,0 +1,158 @@
+<h2>Neon Breakout: Ultimate Feature Menu</h2>
+<p class="subtitle">Select the features that excite you most (multi-select enabled). Click as many as you want.</p>
+
+<h3 style="color:#0ff; margin-top:2rem;">Gameplay Depth</h3>
+<div class="options" data-multiselect>
+  <div class="option" data-choice="curve-shot" onclick="toggleSelect(this)">
+    <div class="letter">1</div>
+    <div class="content">
+      <h3>Curve Shot Mechanic</h3>
+      <p>Hold spacebar/touch to bend the ball mid-flight toward your paddle's direction. A faint laser guide shows the curved path. Transforms breakout from "launch and pray" to "launch and steer." Massive skill ceiling.</p>
+    </div>
+  </div>
+  <div class="option" data-choice="brick-dna" onclick="toggleSelect(this)">
+    <div class="letter">2</div>
+    <div class="content">
+      <h3>Brick DNA (Genetic Behaviors)</h3>
+      <p>Bricks get hidden "genes": <strong>Splitter</strong> (breaks into 2 smaller bricks), <strong>Magnet</strong> (curves ball toward it), <strong>Ghost</strong> (fades in/out), <strong>Bomb</strong> (chain-reaction explosions), <strong>Regenerator</strong> (heals neighbors), <strong>Shifter</strong> (swaps positions). At higher levels, bricks stack 2 genes. A Splitter+Bomb brick splits into two bombs.</p>
+    </div>
+  </div>
+  <div class="option" data-choice="gravity-wells" onclick="toggleSelect(this)">
+    <div class="letter">3</div>
+    <div class="content">
+      <h3>Gravity Wells</h3>
+      <p>Swirling vortexes that bend the ball's trajectory. Cyan wells attract, magenta wells repel. At high levels, wells can briefly capture the ball in a decaying orbit. Every shot plays differently.</p>
+    </div>
+  </div>
+  <div class="option" data-choice="paddle-abilities" onclick="toggleSelect(this)">
+    <div class="letter">4</div>
+    <div class="content">
+      <h3>Paddle Abilities (Cooldown)</h3>
+      <p>Spacebar/double-tap activates: <strong>Pulse</strong> (shockwave damages bricks in a cone), <strong>Magnet</strong> (ball sticks, aim and release), <strong>Phase Shift</strong> (teleport paddle to ball's X). 10-second cooldown with a neon ring indicator.</p>
+    </div>
+  </div>
+  <div class="option" data-choice="boss-fights" onclick="toggleSelect(this)">
+    <div class="letter">5</div>
+    <div class="content">
+      <h3>Sentinel Boss Fights</h3>
+      <p>Every 5 levels, face a geometric neon entity (triangle, hexagon, eye) with destructible core nodes connected by glowing lines. Boss moves, drops hazard bricks, has phase transitions as you destroy outer nodes. Final core explodes in a massive particle cascade.</p>
+    </div>
+  </div>
+  <div class="option" data-choice="cascade-gravity" onclick="toggleSelect(this)">
+    <div class="letter">6</div>
+    <div class="content">
+      <h3>Cascade Brick Gravity</h3>
+      <p>Destroy a brick and unsupported bricks above it fall down with gravity until they land. Creates dynamic shifting landscapes and emergent "avalanche" moments. Adds a puzzle/strategy layer to targeting.</p>
+    </div>
+  </div>
+</div>
+
+<h3 style="color:#f0f; margin-top:2rem;">Visual Spectacle</h3>
+<div class="options" data-multiselect>
+  <div class="option" data-choice="procedural-audio" onclick="toggleSelect(this)">
+    <div class="letter">7</div>
+    <div class="content">
+      <h3>Procedural Synthwave Audio</h3>
+      <p>Full soundtrack generated via Web Audio API (zero audio files). Bassline drives glow pulsing on all neon elements. Brick hits trigger pitched synth notes based on row (emergent melodies!). Combos add reverb and distortion. Paddle thuds on contact.</p>
+    </div>
+  </div>
+  <div class="option" data-choice="synthwave-bg" onclick="toggleSelect(this)">
+    <div class="letter">8</div>
+    <div class="content">
+      <h3>Synthwave Horizon Background</h3>
+      <p>Perspective grid receding to a neon sun behind the game field. Grid speed and sun color respond to combo: calm at 0, accelerating and pulsing at 10+. Rendered to offscreen canvas for near-zero performance cost.</p>
+    </div>
+  </div>
+  <div class="option" data-choice="brick-shatter" onclick="toggleSelect(this)">
+    <div class="letter">9</div>
+    <div class="content">
+      <h3>Brick Shatter Physics</h3>
+      <p>Bricks fracture into 3-5 tumbling angular shards that bounce off walls and fade. During high combos, shards trail ember particles. Feels like smashing neon glass.</p>
+    </div>
+  </div>
+  <div class="option" data-choice="color-themes" onclick="toggleSelect(this)">
+    <div class="letter">10</div>
+    <div class="content">
+      <h3>Neon Color Theme Shifts</h3>
+      <p>Every 3 levels, the entire palette smoothly transitions: Cyan/Magenta &rarr; Gold/Purple &rarr; Green/Red &rarr; White/Blue &rarr; Orange/Teal. All elements lerp together over 2 seconds. The world changes color as you play.</p>
+    </div>
+  </div>
+  <div class="option" data-choice="crt-mode" onclick="toggleSelect(this)">
+    <div class="letter">11</div>
+    <div class="content">
+      <h3>CRT Post-Processing Toggle</h3>
+      <p>Optional retro CRT effects: scanlines, RGB chromatic aberration at edges, vignette, slight screen curvature. Toggle on/off. Retro arcade fans will love it.</p>
+    </div>
+  </div>
+  <div class="option" data-choice="bg-creatures" onclick="toggleSelect(this)">
+    <div class="letter">12</div>
+    <div class="content">
+      <h3>Living Neon Ecosystem</h3>
+      <p>Tiny neon geometric creatures (jellyfish, triangles, circles) drift in the background at low opacity. They scatter from the ball, cluster around combos, swirl near power-ups, flee during boss fights. Purely decorative but makes the world feel alive.</p>
+    </div>
+  </div>
+</div>
+
+<h3 style="color:#ff0; margin-top:2rem;">Meta-Game & Social</h3>
+<div class="options" data-multiselect>
+  <div class="option" data-choice="ghost-replay" onclick="toggleSelect(this)">
+    <div class="letter">13</div>
+    <div class="content">
+      <h3>Ghost Replay Rival</h3>
+      <p>After each game, your run is recorded (~2KB). Next play, a translucent ghost paddle replays your best run in the background. You're racing yourself. Ghost rendered as dim wireframe with afterimage trail.</p>
+    </div>
+  </div>
+  <div class="option" data-choice="screenshot-capture" onclick="toggleSelect(this)">
+    <div class="letter">14</div>
+    <div class="content">
+      <h3>Auto Screenshot Moments</h3>
+      <p>Game detects highlight moments (10+ combo, boss kill, flawless level) and auto-captures a styled PNG with score overlay + watermark. Camera flash animation, share button appears. Native share on mobile, clipboard on desktop.</p>
+    </div>
+  </div>
+  <div class="option" data-choice="daily-challenge" onclick="toggleSelect(this)">
+    <div class="letter">15</div>
+    <div class="content">
+      <h3>Daily Seed Challenge</h3>
+      <p>Date-seeded PRNG generates the same level for everyone worldwide. Share URL-encoded scores: "Beat my 4,520 on today's challenge." A reason to come back every day.</p>
+    </div>
+  </div>
+  <div class="option" data-choice="achievement-constellation" onclick="toggleSelect(this)">
+    <div class="letter">16</div>
+    <div class="content">
+      <h3>Achievement Constellation</h3>
+      <p>Achievements displayed as a star map. Completed ones glow and connect with neon lines. The constellation forms a recognizable shape (paddle, ball) as you earn more. Tap a star to see its requirement.</p>
+    </div>
+  </div>
+  <div class="option" data-choice="endless-mode" onclick="toggleSelect(this)">
+    <div class="letter">17</div>
+    <div class="content">
+      <h3>Endless "Hyperdrive" Mode</h3>
+      <p>Bricks scroll downward continuously. If any brick crosses the paddle line, game over. Speed climbs every 30s. Visuals intensify with time. Pure high-score survival. Unlocked after level 10.</p>
+    </div>
+  </div>
+  <div class="option" data-choice="architect-mode" onclick="toggleSelect(this)">
+    <div class="letter">18</div>
+    <div class="content">
+      <h3>Architect Mode (Level Editor)</h3>
+      <p>Draw your own brick layouts by clicking cells. Pick brick types from a toolbar. Layout encodes to a URL hash for sharing. Every player becomes a level designer, every level is shareable content.</p>
+    </div>
+  </div>
+</div>
+
+<h3 style="color:#f44; margin-top:2rem;">Wild Cards</h3>
+<div class="options" data-multiselect>
+  <div class="option" data-choice="temporal-echo" onclick="toggleSelect(this)">
+    <div class="letter">19</div>
+    <div class="content">
+      <h3>Temporal Echo Power-Up</h3>
+      <p>Rare power-up: saves a 5-second state snapshot, then replays those 5 seconds as a ghost layer while you keep playing in real-time. Both real AND echo balls deal damage. Doubled destruction, mind-bending visuals.</p>
+    </div>
+  </div>
+  <div class="option" data-choice="prism-powerup" onclick="toggleSelect(this)">
+    <div class="letter">20</div>
+    <div class="content">
+      <h3>Prism Spectrum Split</h3>
+      <p>Ball splits into 7 rainbow-colored mini-balls. Each does bonus damage to color-matched bricks (instant kill). Matched kills drop guaranteed power-ups. Spectacular visual fireworks.</p>
+    </div>
+  </div>
+</div>

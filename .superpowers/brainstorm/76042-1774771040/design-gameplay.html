@@ -1,0 +1,72 @@
+<h2>Design Review: Core Gameplay (1 of 4)</h2>
+<p class="subtitle">Three mechanics that transform how the game plays</p>
+
+<div class="section">
+  <h3 style="color:#0ff;">1. Curve Shot Mechanic</h3>
+  <div class="mockup">
+    <div class="mockup-header">How It Works</div>
+    <div class="mockup-body" style="padding:1.5rem;">
+      <p><strong>Input:</strong> Hold spacebar (desktop) or touch-hold (mobile) while the ball is in flight</p>
+      <p><strong>Effect:</strong> A lateral force is applied to the ball in the direction the paddle is moving. Max ~15-degree deflection over the ball's travel.</p>
+      <p><strong>Visual:</strong> A faint curved laser-sight line projects from the ball showing the bent trajectory while input is held. The line uses the ball's glow color at low opacity.</p>
+      <p><strong>Tuning:</strong> Force is proportional to paddle velocity. Stationary paddle = no curve. Fast paddle movement = max curve. This means you steer by moving the paddle in the direction you want the ball to bend.</p>
+      <p style="color:#0ff;margin-top:1rem;"><strong>Why it matters:</strong> Every shot becomes intentional. Players can thread balls into gaps, target specific bricks, and aim for boss weak points.</p>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h3 style="color:#f0f;">2. Paddle Abilities (Cooldown-Based)</h3>
+  <div class="mockup">
+    <div class="mockup-header">Three Abilities — One Per Level Set</div>
+    <div class="mockup-body" style="padding:1.5rem;">
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1.5rem;">
+        <div style="text-align:center;">
+          <div style="font-size:2rem;color:#0ff;">&#x2B06;</div>
+          <h3 style="color:#0ff;">PULSE</h3>
+          <p style="font-size:0.85rem;">Shockwave blasts upward in a cone, damaging bricks in range. Great for clearing stubborn clusters. Levels 1-5.</p>
+        </div>
+        <div style="text-align:center;">
+          <div style="font-size:2rem;color:#f0f;">&#x1F9F2;</div>
+          <h3 style="color:#f0f;">MAGNET</h3>
+          <p style="font-size:0.85rem;">Ball sticks to paddle on next contact. Aim with position + curve shot, release on click/tap. Levels 6-10.</p>
+        </div>
+        <div style="text-align:center;">
+          <div style="font-size:2rem;color:#ff0;">&#x26A1;</div>
+          <h3 style="color:#ff0;">PHASE SHIFT</h3>
+          <p style="font-size:0.85rem;">Paddle instantly teleports to ball's X position. Emergency save. Visual: neon streak trail from old to new position. Levels 11+.</p>
+        </div>
+      </div>
+      <div style="margin-top:1.5rem;border-top:1px solid #333;padding-top:1rem;">
+        <p><strong>Activation:</strong> Press 'E' key (desktop) or double-tap (mobile)</p>
+        <p><strong>Cooldown:</strong> 10 seconds. Neon ring around paddle fills as it charges. Glows bright when ready.</p>
+        <p><strong>Boss fights:</strong> Boss drops a free Magnet power-up at each phase transition — a catch-and-aim reward moment.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h3 style="color:#f44;">3. Prism Spectrum Split (New Power-Up)</h3>
+  <div class="mockup">
+    <div class="mockup-header">Rainbow Destruction</div>
+    <div class="mockup-body" style="padding:1.5rem;">
+      <div style="display:flex;gap:0.5rem;justify-content:center;margin-bottom:1rem;">
+        <span style="color:hsl(340,100%,60%);font-size:1.5rem;">&#x25CF;</span>
+        <span style="color:hsl(20,100%,60%);font-size:1.5rem;">&#x25CF;</span>
+        <span style="color:hsl(50,100%,60%);font-size:1.5rem;">&#x25CF;</span>
+        <span style="color:hsl(140,100%,60%);font-size:1.5rem;">&#x25CF;</span>
+        <span style="color:hsl(185,100%,60%);font-size:1.5rem;">&#x25CF;</span>
+        <span style="color:hsl(260,100%,60%);font-size:1.5rem;">&#x25CF;</span>
+        <span style="color:hsl(300,100%,60%);font-size:1.5rem;">&#x25CF;</span>
+      </div>
+      <p><strong>Trigger:</strong> Rare 5th power-up drop (rainbow diamond icon, ~8% drop rate)</p>
+      <p><strong>Effect:</strong> Ball splits into 7 smaller balls, one per brick row color</p>
+      <p><strong>Bonus:</strong> Color-matched ball vs brick = instant kill regardless of HP. Matched kills guarantee a power-up drop.</p>
+      <p><strong>Duration:</strong> 8 seconds, then mini-balls fade. Main ball continues.</p>
+      <p style="color:#ff0;margin-top:1rem;"><strong>Synergy:</strong> This creates the most screenshot-worthy moments in the game — 7 colored balls with trails blazing through matching bricks, chain explosions everywhere. Auto Screenshot will love this.</p>
+    </div>
+  </div>
+</div>
+
+<p class="subtitle" style="margin-top:2rem;">Does this gameplay design feel right? Any tweaks before we move to visuals?</p>

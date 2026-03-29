@@ -1,0 +1,129 @@
+<h2>Design Review: Visual Spectacle (2 of 4)</h2>
+<p class="subtitle">Four features that make the game feel and sound alive</p>
+
+<div class="section">
+  <h3 style="color:#0ff;">4. Procedural Synthwave Audio</h3>
+  <div class="mockup">
+    <div class="mockup-header">Zero Audio Files — 100% Web Audio API</div>
+    <div class="mockup-body" style="padding:1.5rem;">
+      <h3 style="color:#0ff;margin-top:0;">Soundtrack</h3>
+      <p>A looping synthwave bassline built from OscillatorNodes + BiquadFilters. Tempo is steady (~120 BPM). The bass drives a global "pulse" value that modulates glow radius on all neon elements — everything breathes with the beat.</p>
+
+      <h3 style="color:#f0f;margin-top:1.5rem;">Reactive SFX</h3>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+        <div>
+          <p><strong style="color:#0ff;">Brick hit:</strong> Pitched synth note based on brick row. Top row = high pitch, bottom = low. Destroying bricks creates emergent melodies as you play.</p>
+          <p><strong style="color:#f0f;">Combo builds:</strong> Reverb and distortion increase with combo count. At 10+ combo, the audio is thick and intense.</p>
+        </div>
+        <div>
+          <p><strong style="color:#ff0;">Paddle contact:</strong> Low-frequency thud. Satisfying impact feel.</p>
+          <p><strong style="color:#f44;">Ball loss:</strong> Descending pitch sweep — the "falling" sound.</p>
+          <p><strong style="color:#0f0;">Power-up collect:</strong> Rising arpeggio, 3 quick notes.</p>
+        </div>
+      </div>
+
+      <div style="margin-top:1.5rem;border-top:1px solid #333;padding-top:1rem;">
+        <p><strong>Activation:</strong> Audio starts on first user interaction (click/tap to start game). Respects browser autoplay policies.</p>
+        <p><strong>Mute toggle:</strong> 'M' key or a small speaker icon in the HUD corner.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h3 style="color:#f0f;">5. Synthwave Horizon Background</h3>
+  <div class="mockup">
+    <div class="mockup-header">Behind the Game Field</div>
+    <div class="mockup-body" style="position:relative;height:280px;overflow:hidden;background:linear-gradient(180deg, #05050a 0%, #0a0015 40%, #1a0030 60%, #2a0040 100%);">
+      <!-- Neon sun -->
+      <div style="position:absolute;bottom:90px;left:50%;transform:translateX(-50%);width:120px;height:60px;border-radius:120px 120px 0 0;background:linear-gradient(0deg,#f0f,#ff0);opacity:0.7;box-shadow:0 0 60px #f0f,0 0 120px #f0f55;"></div>
+      <!-- Horizon line -->
+      <div style="position:absolute;bottom:90px;left:0;right:0;height:2px;background:#f0f;box-shadow:0 0 10px #f0f;"></div>
+      <!-- Grid lines horizontal -->
+      <div style="position:absolute;bottom:60px;left:0;right:0;height:1px;background:#f0f;opacity:0.3;"></div>
+      <div style="position:absolute;bottom:35px;left:0;right:0;height:1px;background:#f0f;opacity:0.2;"></div>
+      <div style="position:absolute;bottom:15px;left:0;right:0;height:1px;background:#f0f;opacity:0.15;"></div>
+      <!-- Grid lines vertical -->
+      <div style="position:absolute;bottom:0;left:20%;width:1px;height:90px;background:linear-gradient(0deg,#f0f44,transparent);"></div>
+      <div style="position:absolute;bottom:0;left:35%;width:1px;height:90px;background:linear-gradient(0deg,#f0f44,transparent);"></div>
+      <div style="position:absolute;bottom:0;left:50%;width:1px;height:90px;background:linear-gradient(0deg,#f0f44,transparent);"></div>
+      <div style="position:absolute;bottom:0;left:65%;width:1px;height:90px;background:linear-gradient(0deg,#f0f44,transparent);"></div>
+      <div style="position:absolute;bottom:0;left:80%;width:1px;height:90px;background:linear-gradient(0deg,#f0f44,transparent);"></div>
+      <!-- Label -->
+      <div style="position:absolute;top:15px;left:50%;transform:translateX(-50%);text-align:center;">
+        <p style="color:#0ff;font-family:Orbitron,monospace;font-size:0.75rem;letter-spacing:0.2em;opacity:0.6;">RENDERED ON OFFSCREEN CANVAS</p>
+      </div>
+      <div style="position:absolute;bottom:5px;left:50%;transform:translateX(-50%);text-align:center;">
+        <p style="color:#f0f;font-family:Rajdhani,sans-serif;font-size:0.7rem;opacity:0.5;">Grid scrolls toward camera. Speed + sun pulse tied to combo.</p>
+      </div>
+    </div>
+  </div>
+  <div style="margin-top:1rem;">
+    <p><strong>Combo reactivity:</strong> At 0 combo, grid scrolls slowly, sun is dim. At 5+ combo, grid accelerates. At 10+, sun pulses, faint scanline ripples cross the horizon.</p>
+    <p><strong>Performance:</strong> Pre-rendered to offscreen canvas, composited behind game layer. Updated every 2 frames, not every frame. Near-zero cost.</p>
+  </div>
+</div>
+
+<div class="section">
+  <h3 style="color:#ff0;">6. CRT Post-Processing Toggle</h3>
+  <div class="mockup">
+    <div class="mockup-header">Retro Arcade Mode</div>
+    <div class="mockup-body" style="padding:1.5rem;">
+      <div class="split">
+        <div style="flex:1;text-align:center;">
+          <p class="label">Effects Applied</p>
+          <ul style="text-align:left;font-size:0.9rem;">
+            <li><strong>Scanlines:</strong> Every other pixel row at 5% black opacity</li>
+            <li><strong>Chromatic aberration:</strong> Slight RGB channel offset at screen edges (2-3px)</li>
+            <li><strong>Vignette:</strong> Radial gradient darkening corners</li>
+            <li><strong>Screen curve:</strong> Very subtle barrel distortion</li>
+          </ul>
+        </div>
+        <div style="flex:1;text-align:center;">
+          <p class="label">Implementation</p>
+          <ul style="text-align:left;font-size:0.9rem;">
+            <li>Game renders to primary canvas as normal</li>
+            <li>Post-process pass draws to a second overlay canvas</li>
+            <li>Scanlines via repeating 2px gradient pattern</li>
+            <li>Chromatic aberration via 3x <code>drawImage</code> with globalCompositeOperation per channel</li>
+          </ul>
+        </div>
+      </div>
+      <p style="margin-top:1rem;"><strong>Toggle:</strong> 'C' key or button in pause/title screen. State saved to localStorage.</p>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h3 style="color:#0f0;">7. Living Neon Ecosystem</h3>
+  <div class="mockup">
+    <div class="mockup-header">Background Creatures</div>
+    <div class="mockup-body" style="padding:1.5rem;">
+      <div style="display:flex;gap:2rem;justify-content:center;margin-bottom:1.5rem;">
+        <div style="text-align:center;">
+          <div style="font-size:2.5rem;opacity:0.15;color:#0ff;">&#x25B3;</div>
+          <p style="font-size:0.75rem;color:#0ff;opacity:0.5;">Drifter</p>
+        </div>
+        <div style="text-align:center;">
+          <div style="font-size:2.5rem;opacity:0.15;color:#f0f;">&#x25CB;</div>
+          <p style="font-size:0.75rem;color:#f0f;opacity:0.5;">Orb</p>
+        </div>
+        <div style="text-align:center;">
+          <div style="font-size:2.5rem;opacity:0.15;color:#0f0;">&#x2B21;</div>
+          <p style="font-size:0.75rem;color:#0f0;opacity:0.5;">Hex</p>
+        </div>
+        <div style="text-align:center;">
+          <div style="font-size:2.5rem;opacity:0.15;color:#ff0;">&#x223F;</div>
+          <p style="font-size:0.75rem;color:#ff0;opacity:0.5;">Jellyfish</p>
+        </div>
+      </div>
+      <p><strong>Count:</strong> 8-12 creatures, capped. Simple geometric shapes drawn with 3-5 canvas calls each.</p>
+      <p><strong>AI:</strong> Lightweight boids — separation from each other, gentle drift, flee from ball (within 80px radius).</p>
+      <p><strong>Reactivity:</strong> Cluster near active combos, swirl around power-ups, scatter to edges during boss fights.</p>
+      <p><strong>Rendering:</strong> 10-15% opacity, drawn before the game layer. Never interfere with gameplay readability.</p>
+      <p><strong>Audio sync:</strong> Creatures pulse slightly with the bass beat when procedural audio is active.</p>
+    </div>
+  </div>
+</div>
+
+<p class="subtitle" style="margin-top:2rem;">How does the visual/audio layer feel? Any adjustments before we move to bosses and meta-game?</p>

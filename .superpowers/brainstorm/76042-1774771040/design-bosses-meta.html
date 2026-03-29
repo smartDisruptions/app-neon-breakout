@@ -1,0 +1,98 @@
+<h2>Design Review: Bosses & Meta-Game (3 of 4)</h2>
+<p class="subtitle">Milestone moments and reasons to come back</p>
+
+<div class="section">
+  <h3 style="color:#f44;">8. Sentinel Boss Fights</h3>
+  <div class="mockup">
+    <div class="mockup-header">Every 5 Levels — A Living Geometric Entity</div>
+    <div class="mockup-body" style="padding:1.5rem;">
+
+      <h3 style="color:#f44;margin-top:0;">Structure</h3>
+      <p>The boss is a large wireframe geometry (triangle at level 5, hexagon at level 10, eye-shape at level 15) floating in the upper half of the screen. It has 3-5 <strong>core nodes</strong> — glowing circles connected by neon lines. Outer nodes must be destroyed before inner ones become vulnerable.</p>
+
+      <h3 style="color:#ff0;margin-top:1.5rem;">Phases</h3>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;">
+        <div style="border:1px solid #333;padding:1rem;border-radius:8px;">
+          <p class="label" style="color:#0ff;">Phase 1: Open</p>
+          <p style="font-size:0.85rem;">Boss drifts laterally. Outer nodes exposed. Ball bounces off the wireframe shell but damages nodes on direct hits. 2-3 outer nodes to destroy.</p>
+        </div>
+        <div style="border:1px solid #333;padding:1rem;border-radius:8px;">
+          <p class="label" style="color:#ff0;">Phase 2: Aggro</p>
+          <p style="font-size:0.85rem;">Outer nodes gone. Boss speeds up, periodically drops hazard bricks (single bricks that fall toward paddle — hit them or dodge). Inner nodes exposed intermittently behind rotating shield segments.</p>
+        </div>
+        <div style="border:1px solid #333;padding:1rem;border-radius:8px;">
+          <p class="label" style="color:#f44;">Phase 3: Core</p>
+          <p style="font-size:0.85rem;">Final node. Boss pulses and shakes. Drops hazard bricks faster. Core is always exposed but boss moves erratically. Destroy it for a massive particle cascade + screen shake + bonus points.</p>
+        </div>
+      </div>
+
+      <h3 style="color:#0f0;margin-top:1.5rem;">Key Details</h3>
+      <ul style="font-size:0.9rem;">
+        <li><strong>Phase transitions:</strong> Boss freezes, geometry unfolds/reconfigures with a neon flash. Drops a free Magnet power-up so the player can catch and aim.</li>
+        <li><strong>Hazard bricks:</strong> Single falling bricks. If they reach the paddle line, they don't kill you — they shrink the paddle temporarily (3 seconds). Punishing but not lethal.</li>
+        <li><strong>Curve Shot synergy:</strong> Players can curve the ball to thread past shield segments and hit exposed nodes. Skill-rewarding.</li>
+        <li><strong>Boss HP scales:</strong> Level 5 boss has 3 nodes (easy intro). Level 10 has 4 nodes + faster shields. Level 15+ has 5 nodes + more hazard bricks.</li>
+        <li><strong>Victory reward:</strong> Bonus life + score multiplier for next 3 levels.</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h3 style="color:#0ff;">9. Achievement Constellation</h3>
+  <div class="mockup">
+    <div class="mockup-header">Star Map Trophy Room</div>
+    <div class="mockup-body" style="position:relative;height:300px;background:#05050a;overflow:hidden;">
+      <!-- Stars - earned (bright) -->
+      <div style="position:absolute;top:40px;left:120px;width:12px;height:12px;border-radius:50%;background:#0ff;box-shadow:0 0 15px #0ff,0 0 30px #0ff;"></div>
+      <div style="position:absolute;top:80px;left:200px;width:12px;height:12px;border-radius:50%;background:#f0f;box-shadow:0 0 15px #f0f,0 0 30px #f0f;"></div>
+      <div style="position:absolute;top:60px;left:310px;width:12px;height:12px;border-radius:50%;background:#0ff;box-shadow:0 0 15px #0ff,0 0 30px #0ff;"></div>
+      <div style="position:absolute;top:130px;left:160px;width:12px;height:12px;border-radius:50%;background:#ff0;box-shadow:0 0 15px #ff0,0 0 30px #ff0;"></div>
+      <div style="position:absolute;top:150px;left:270px;width:12px;height:12px;border-radius:50%;background:#0f0;box-shadow:0 0 15px #0f0,0 0 30px #0f0;"></div>
+      <!-- Stars - unearned (dim) -->
+      <div style="position:absolute;top:100px;left:400px;width:10px;height:10px;border-radius:50%;border:1px solid #fff3;"></div>
+      <div style="position:absolute;top:180px;left:350px;width:10px;height:10px;border-radius:50%;border:1px solid #fff3;"></div>
+      <div style="position:absolute;top:200px;left:450px;width:10px;height:10px;border-radius:50%;border:1px solid #fff3;"></div>
+      <div style="position:absolute;top:220px;left:190px;width:10px;height:10px;border-radius:50%;border:1px solid #fff3;"></div>
+      <div style="position:absolute;top:240px;left:300px;width:10px;height:10px;border-radius:50%;border:1px solid #fff3;"></div>
+      <!-- Connecting lines between earned stars -->
+      <svg style="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;">
+        <line x1="126" y1="46" x2="206" y2="86" stroke="#0ff" stroke-width="1" opacity="0.4"/>
+        <line x1="206" y1="86" x2="316" y2="66" stroke="#f0f" stroke-width="1" opacity="0.4"/>
+        <line x1="206" y1="86" x2="166" y2="136" stroke="#f0f" stroke-width="1" opacity="0.4"/>
+        <line x1="166" y1="136" x2="276" y2="156" stroke="#ff0" stroke-width="1" opacity="0.4"/>
+      </svg>
+      <!-- Tooltip example -->
+      <div style="position:absolute;top:55px;left:215px;background:#111;border:1px solid #f0f;padding:8px 12px;border-radius:6px;font-size:0.75rem;">
+        <p style="color:#f0f;margin:0;font-weight:bold;">COMBO HUNTER</p>
+        <p style="color:#aaa;margin:4px 0 0 0;">Reach 15x combo</p>
+      </div>
+      <!-- Legend -->
+      <div style="position:absolute;bottom:10px;right:15px;font-size:0.65rem;color:#666;">
+        <span style="color:#0ff;">&#x25CF;</span> Earned &nbsp;
+        <span style="color:#fff3;">&#x25CB;</span> Locked &nbsp;
+        <span style="color:#fff2;">&#x2500;</span> Connected
+      </div>
+    </div>
+  </div>
+  <div style="margin-top:1rem;">
+    <p><strong>Access:</strong> "ACHIEVEMENTS" button on title screen, or 'A' key.</p>
+    <p><strong>Interaction:</strong> Hover/tap any star to see name + requirement. Earned stars show completion date.</p>
+    <p><strong>Shape:</strong> The full constellation forms a paddle shape. As you earn more, the image emerges.</p>
+    <p><strong>Storage:</strong> localStorage — persists between sessions.</p>
+
+    <h3 style="color:#ff0;margin-top:1.5rem;">Example Achievements (15-20 total)</h3>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;font-size:0.85rem;">
+      <div><span style="color:#0ff;">&#x25CF;</span> <strong>First Blood</strong> — Destroy your first brick</div>
+      <div><span style="color:#f0f;">&#x25CF;</span> <strong>Combo Hunter</strong> — Reach 15x combo</div>
+      <div><span style="color:#ff0;">&#x25CF;</span> <strong>Untouchable</strong> — Clear a level with no lives lost</div>
+      <div><span style="color:#0f0;">&#x25CF;</span> <strong>Sentinel Slayer</strong> — Defeat your first boss</div>
+      <div><span style="color:#f44;">&#x25CF;</span> <strong>Prism Master</strong> — Destroy 20 bricks with one Prism</div>
+      <div><span style="color:#0ff;">&#x25CF;</span> <strong>Curve Ace</strong> — Hit 3 bricks in one curved shot</div>
+      <div><span style="color:#f0f;">&#x25CF;</span> <strong>Pulse Destroyer</strong> — Destroy 5 bricks with one Pulse</div>
+      <div><span style="color:#ff0;">&#x25CF;</span> <strong>Marathon</strong> — Reach level 20</div>
+    </div>
+  </div>
+</div>
+
+<p class="subtitle" style="margin-top:2rem;">How do bosses and achievements feel? Any tweaks before the final section (auto screenshots)?</p>

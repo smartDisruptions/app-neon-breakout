@@ -1,0 +1,81 @@
+<h2>Design Review: Social / Sharing (4 of 4)</h2>
+<p class="subtitle">The feature that makes people show the game to others</p>
+
+<div class="section">
+  <h3 style="color:#ff0;">10. Auto Screenshot Moments</h3>
+  <div class="mockup">
+    <div class="mockup-header">Highlight Detection + Capture</div>
+    <div class="mockup-body" style="padding:1.5rem;">
+
+      <h3 style="color:#ff0;margin-top:0;">Trigger Events</h3>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;font-size:0.9rem;">
+        <div style="border:1px solid #333;padding:0.75rem;border-radius:6px;">
+          <p style="color:#0ff;margin:0;font-weight:bold;">10+ Combo</p>
+          <p style="margin:4px 0 0;color:#aaa;">Captured at peak combo before decay</p>
+        </div>
+        <div style="border:1px solid #333;padding:0.75rem;border-radius:6px;">
+          <p style="color:#f44;margin:0;font-weight:bold;">Boss Kill</p>
+          <p style="margin:4px 0 0;color:#aaa;">Captured during particle cascade</p>
+        </div>
+        <div style="border:1px solid #333;padding:0.75rem;border-radius:6px;">
+          <p style="color:#0f0;margin:0;font-weight:bold;">Flawless Level</p>
+          <p style="margin:4px 0 0;color:#aaa;">Clear a level with no lives lost</p>
+        </div>
+        <div style="border:1px solid #333;padding:0.75rem;border-radius:6px;">
+          <p style="color:#f0f;margin:0;font-weight:bold;">Prism Frenzy</p>
+          <p style="margin:4px 0 0;color:#aaa;">7 rainbow balls active simultaneously</p>
+        </div>
+      </div>
+
+      <h3 style="color:#0ff;margin-top:1.5rem;">Capture Flow</h3>
+      <div style="background:#111;border-radius:8px;padding:1rem;font-size:0.85rem;">
+        <p style="margin:0;">1. Trigger detected &rarr; brief <strong>camera flash</strong> animation (white overlay, 200ms fade)</p>
+        <p style="margin:8px 0 0;">2. Canvas state captured via <code>canvas.toBlob()</code></p>
+        <p style="margin:8px 0 0;">3. Styled overlay composited onto capture:</p>
+        <div style="margin:8px 0 0 1.5rem;">
+          <p style="margin:0;color:#0ff;">&#x2022; Score + combo count (top-left)</p>
+          <p style="margin:4px 0 0;color:#f0f;">&#x2022; Level number (top-right)</p>
+          <p style="margin:4px 0 0;color:#ff0;">&#x2022; Trigger label — "10X COMBO!" / "BOSS DEFEATED" / "FLAWLESS" (center, large)</p>
+          <p style="margin:4px 0 0;color:#666;">&#x2022; "NEON BREAKOUT" watermark (bottom, subtle)</p>
+        </div>
+        <p style="margin:8px 0 0;">4. <strong>Share button</strong> appears bottom-right for 5 seconds, then fades</p>
+      </div>
+
+      <h3 style="color:#f0f;margin-top:1.5rem;">Sharing</h3>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+        <div>
+          <p class="label">Mobile</p>
+          <p style="font-size:0.85rem;">Uses <code>navigator.share()</code> with the PNG blob. Opens native share sheet — iMessage, Instagram stories, Twitter, etc.</p>
+        </div>
+        <div>
+          <p class="label">Desktop</p>
+          <p style="font-size:0.85rem;">Uses <code>navigator.clipboard.write()</code> to copy image to clipboard. Toast notification: "Screenshot copied!" Paste anywhere.</p>
+        </div>
+      </div>
+
+      <div style="margin-top:1.5rem;border-top:1px solid #333;padding-top:1rem;">
+        <p><strong>Cooldown:</strong> 10-second minimum between captures to avoid spam during intense sequences.</p>
+        <p><strong>Gallery:</strong> Last 5 captures stored in memory (not localStorage — session only). Viewable from pause menu. Tap to re-share.</p>
+        <p><strong>Non-intrusive:</strong> Flash is brief, share button is small and fades. Gameplay never pauses or interrupts.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section" style="margin-top:2rem;border:1px solid #0ff3;border-radius:8px;padding:1.5rem;">
+  <h3 style="color:#0ff;margin-top:0;">Full Feature Summary — The Ultimate Neon Breakout</h3>
+  <div style="display:grid;grid-template-columns:auto 1fr auto;gap:0.5rem 1rem;font-size:0.9rem;align-items:center;">
+    <span style="color:#0ff;font-weight:bold;">1</span><span>Curve Shot Mechanic</span><span style="color:#555;">Gameplay</span>
+    <span style="color:#0ff;font-weight:bold;">2</span><span>Paddle Abilities (Pulse / Magnet / Phase Shift)</span><span style="color:#555;">Gameplay</span>
+    <span style="color:#0ff;font-weight:bold;">3</span><span>Prism Spectrum Split Power-Up</span><span style="color:#555;">Gameplay</span>
+    <span style="color:#f0f;font-weight:bold;">4</span><span>Procedural Synthwave Audio</span><span style="color:#555;">Spectacle</span>
+    <span style="color:#f0f;font-weight:bold;">5</span><span>Synthwave Horizon Background</span><span style="color:#555;">Spectacle</span>
+    <span style="color:#f0f;font-weight:bold;">6</span><span>CRT Post-Processing Toggle</span><span style="color:#555;">Spectacle</span>
+    <span style="color:#f0f;font-weight:bold;">7</span><span>Living Neon Ecosystem</span><span style="color:#555;">Spectacle</span>
+    <span style="color:#f44;font-weight:bold;">8</span><span>Sentinel Boss Fights</span><span style="color:#555;">Depth</span>
+    <span style="color:#ff0;font-weight:bold;">9</span><span>Achievement Constellation</span><span style="color:#555;">Meta</span>
+    <span style="color:#ff0;font-weight:bold;">10</span><span>Auto Screenshot Moments</span><span style="color:#555;">Social</span>
+  </div>
+</div>
+
+<p class="subtitle" style="margin-top:2rem;">That's the full design. If it all looks good, we'll write the spec and move to implementation planning.</p>
