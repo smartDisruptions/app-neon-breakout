@@ -67,11 +67,6 @@ function update() {
     b.trail.push({ x: b.x, y: b.y });
     if (b.trail.length > 12) b.trail.shift();
 
-    // Curve shot: apply lateral force when active
-    if (game.curveActive && game.paddle.vx) {
-      b.vx += game.paddle.vx * 0.015;
-    }
-
     b.x += b.vx;
     b.y += b.vy;
 

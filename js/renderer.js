@@ -215,29 +215,6 @@ export function draw() {
     }
   }
 
-  // Curve shot trajectory preview
-  if (game.curveActive && game.paddle.vx && game.balls.length > 0) {
-    const b = game.balls[0];
-    let simX = b.x, simY = b.y, simVx = b.vx, simVy = b.vy;
-    const curveForce = game.paddle.vx * 0.015;
-    ctx.globalAlpha = 0.2;
-    ctx.fillStyle = defaultBallGlow;
-    for (let step = 0; step < 25; step++) {
-      simVx += curveForce;
-      simX += simVx;
-      simY += simVy;
-      if (simX < 0 || simX > W) simVx = -simVx;
-      if (simY < 0) simVy = -simVy;
-      if (simY > H) break;
-      if (step % 2 === 0) {
-        ctx.beginPath();
-        ctx.arc(simX, simY, 2, 0, Math.PI * 2);
-        ctx.fill();
-      }
-    }
-    ctx.globalAlpha = 1;
-  }
-
   // Paddle
   const px = game.paddle.x - game.paddle.w / 2;
   const isWide = game.activePowers.wide && Date.now() < game.activePowers.wide;

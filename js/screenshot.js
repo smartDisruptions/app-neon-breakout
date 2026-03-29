@@ -6,8 +6,6 @@ import { game } from './state.js';
 let captures = []; // last 5 blobs
 let lastCaptureTime = 0;
 let flashAlpha = 0;
-let shareButtonTimer = 0;
-let lastShareBlob = null;
 
 const COOLDOWN = 10000; // 10 seconds between captures
 
@@ -95,70 +93,9 @@ export function captureHighlight(triggerLabel) {
       if (blob) {
         captures.push(blob);
         if (captures.length > 5) captures.shift();
-        lastShareBlob = blob;
-        showShareButton();
       }
     }, 'image/png');
   });
-}
-
-function showShareButton() {
-  shareButtonTimer = Date.now() + 5000;
-  const btn = document.getElementById('shareBtn');
-  if (btn) {
-    btn.style.display = 'block';
-    btn.style.opacity = '1';
-    setTimeout(() => {
-      btn.style.opacity = '0';
-      setTimeout(() => { btn.style.display = 'none'; }, 300);
-    }, 4700);
-  }
-}
-
-export function shareScreenshot() {
-  if (!lastShareBlob) return;
-
-  const file = new File([lastShareBlob], 'neon-breakout.png', { type: 'image/png' });
-
-  // Mobile: native share
-  if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
-    navigator.share({ files: [file], title: 'Neon Breakout' }).catch(() => {});
-    return;
-  }
-
-  // Desktop: clipboard
-  if (navigator.clipboard && navigator.clipboard.write) {
-    navigator.clipboard.write([
-      new ClipboardItem({ 'image/png': lastShareBlob })
-    ]).then(() => {
-      showToast('Screenshot copied!');
-    }).catch(() => {
-      downloadFallback();
-    });
-    return;
-  }
-
-  // Fallback: download
-  downloadFallback();
-}
-
-function downloadFallback() {
-  if (!lastShareBlob) return;
-  const url = URL.createObjectURL(lastShareBlob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = 'neon-breakout.png';
-  a.click();
-  URL.revokeObjectURL(url);
-}
-
-function showToast(msg) {
-  const toast = document.getElementById('toast');
-  if (toast) {
-    toast.textContent = msg;
-    toast.style.opacity = '1';
-    setTimeout(() => { toast.style.opacity = '0'; }, 2000);
-  }
 }
 
 export function updateFlash() {

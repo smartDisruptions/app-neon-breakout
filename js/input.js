@@ -5,7 +5,6 @@ import AudioEngine from './audio.js';
 import { activateAbility, releaseMagnetBall } from './paddle.js';
 import { toggle as toggleCRT } from './crt.js';
 import { toggleConstellation } from './achievements.js';
-import { shareScreenshot } from './screenshot.js';
 
 // ─── INPUT ───────────────────────────────────────────
 export const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
@@ -32,10 +31,6 @@ cvs.addEventListener('touchmove', function(e) {
   const rect = cvs.getBoundingClientRect();
   game.mouseX = (touch.clientX - rect.left) * (W / rect.width);
 
-  // Curve shot: activate after 300ms hold
-  if (touchStartTime && Date.now() - touchStartTime > 300) {
-    game.curveActive = true;
-  }
 }, { passive: false });
 
 cvs.addEventListener('touchstart', function(e) {
@@ -64,7 +59,6 @@ cvs.addEventListener('touchstart', function(e) {
 }, { passive: false });
 
 cvs.addEventListener('touchend', function(e) {
-  game.curveActive = false;
   touchStartTime = 0;
 }, { passive: false });
 
@@ -99,11 +93,6 @@ document.addEventListener('keydown', function(e) {
     startGameCallback();
     return;
   }
-  // Curve shot: spacebar
-  if (e.code === 'Space') {
-    e.preventDefault();
-    game.curveActive = true;
-  }
   // Ability activation: E key
   if (e.code === 'KeyE') {
     if (game.state === 'playing') activateAbility();
@@ -123,11 +112,6 @@ document.addEventListener('keydown', function(e) {
   }
 });
 
-document.addEventListener('keyup', function(e) {
-  if (e.code === 'Space') {
-    game.curveActive = false;
-  }
-});
 
 // ─── MUTE ICON ──────────────────────────────────────
 function updateMuteIcon() {

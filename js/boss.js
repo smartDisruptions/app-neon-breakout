@@ -49,6 +49,43 @@ function getShapeForLevel(level) {
   return 'eye';
 }
 
+// Shield gap definitions — angular positions (in radians) and widths
+function getShieldGaps(shapeName) {
+  switch (shapeName) {
+    case 'triangle':
+      // 2 gaps, ~50 degrees each
+      return [
+        { angle: Math.PI * 0.5, width: 0.9 },
+        { angle: Math.PI * 1.5, width: 0.9 },
+      ];
+    case 'hexagon':
+      // 2 gaps, ~40 degrees each
+      return [
+        { angle: Math.PI * 0.25, width: 0.7 },
+        { angle: Math.PI * 1.25, width: 0.7 },
+      ];
+    case 'eye':
+      // 1 gap, ~50 degrees — harder
+      return [
+        { angle: Math.PI * 1.5, width: 0.9 },
+      ];
+    default:
+      return [];
+  }
+}
+
+function isInShieldGap(angle, boss) {
+  const gaps = getShieldGaps(boss.shape);
+  for (const gap of gaps) {
+    const gapCenter = gap.angle + boss.rotation;
+    // Normalize the difference to [-PI, PI]
+    let diff = angle - gapCenter;
+    diff = ((diff + Math.PI) % (Math.PI * 2) + Math.PI * 2) % (Math.PI * 2) - Math.PI;
+    if (Math.abs(diff) < gap.width / 2) return true;
+  }
+  return false;
+}
+
 function getBossHP(level) {
   if (level <= 3) return 3;
   if (level <= 6) return 4;
@@ -123,13 +160,16 @@ export function ballBossCollision(ball, boss) {
     return;
   }
 
-  // Bounce off wireframe shell
+  // Bounce off wireframe shell (skip if ball is in a gap)
   if (Math.abs(dist - boss.radius) < ball.r + 3 && dist > 0) {
-    const nx = dx / dist, ny = dy / dist;
-    const dot = ball.vx * nx + ball.vy * ny;
-    if (dot < 0) {
-      ball.vx -= 2 * dot * nx;
-      ball.vy -= 2 * dot * ny;
+    const ballAngle = Math.atan2(dy, dx);
+    if (!isInShieldGap(ballAngle, boss)) {
+      const nx = dx / dist, ny = dy / dist;
+      const dot = ball.vx * nx + ball.vy * ny;
+      if (dot < 0) {
+        ball.vx -= 2 * dot * nx;
+        ball.vy -= 2 * dot * ny;
+      }
     }
   }
 }
@@ -157,19 +197,36 @@ export function drawBoss(ctx, drawGlow) {
 
   ctx.save();
 
-  // Wireframe shape
+  // Wireframe shape with gaps
   ctx.strokeStyle = '#0ff';
   ctx.lineWidth = 1.5;
   ctx.save();
   ctx.translate(boss.x, boss.y);
   ctx.rotate(boss.rotation);
   const verts = boss.shapeDef.vertices(0, 0, boss.radius);
+  const gaps = getShieldGaps(boss.shape);
+
+  // Draw segments, skipping points that fall within gap angles
+  // We sample each edge and break where gaps are
   ctx.beginPath();
-  for (let i = 0; i < verts.length; i++) {
-    if (i === 0) ctx.moveTo(verts[i].x, verts[i].y);
-    else ctx.lineTo(verts[i].x, verts[i].y);
+  let penDown = false;
+  const totalVerts = verts.length;
+  for (let i = 0; i <= totalVerts; i++) {
+    const v = verts[i % totalVerts];
+    const angle = Math.atan2(v.y, v.x);
+    let inGap = false;
+    for (const gap of gaps) {
+      let diff = angle - gap.angle;
+      diff = ((diff + Math.PI) % (Math.PI * 2) + Math.PI * 2) % (Math.PI * 2) - Math.PI;
+      if (Math.abs(diff) < gap.width / 2) { inGap = true; break; }
+    }
+    if (inGap) {
+      penDown = false;
+    } else {
+      if (!penDown) { ctx.moveTo(v.x, v.y); penDown = true; }
+      else ctx.lineTo(v.x, v.y);
+    }
   }
-  ctx.closePath();
   ctx.stroke();
   ctx.restore();
 
