@@ -936,38 +936,6 @@ function getShapeForLevel(level) {
   return 'eye';
 }
 
-function getShieldGaps(shapeName) {
-  switch (shapeName) {
-    case 'triangle':
-      return [
-        { angle: Math.PI * 0.5, width: 0.9 },
-        { angle: Math.PI * 1.5, width: 0.9 },
-      ];
-    case 'hexagon':
-      return [
-        { angle: Math.PI * 0.25, width: 0.7 },
-        { angle: Math.PI * 1.25, width: 0.7 },
-      ];
-    case 'eye':
-      return [
-        { angle: Math.PI * 1.5, width: 0.9 },
-      ];
-    default:
-      return [];
-  }
-}
-
-function isInShieldGap(angle, boss) {
-  const gaps = getShieldGaps(boss.shape);
-  for (const gap of gaps) {
-    const gapCenter = gap.angle + boss.rotation;
-    let diff = angle - gapCenter;
-    diff = ((diff + Math.PI) % (Math.PI * 2) + Math.PI * 2) % (Math.PI * 2) - Math.PI;
-    if (Math.abs(diff) < gap.width / 2) return true;
-  }
-  return false;
-}
-
 function getBossHP(level) {
   if (level <= 3) return 3;
   if (level <= 6) return 4;
@@ -983,7 +951,7 @@ function createBoss(level) {
   const hp = getBossHP(level);
   const moveSpeed = level <= 3 ? 1 : level <= 6 ? 1.3 : level <= 9 ? 1.6 : 2.0;
   if (level >= 12) { radius = 95; }
-  const coreR = level >= 12 ? 22 : 18;
+  const coreR = level >= 12 ? 32 : 28;
 
   game.boss = {
     x: cx, y: cy, baseX: cx,
@@ -1017,19 +985,17 @@ function ballBossCollision(ball, boss) {
   if (!boss || boss.defeated) return;
   if (ball.stuck) return;
 
-  // Check collision with core
+  // Simple: hit the core, deal damage, bounce
   const dx = ball.x - boss.x;
   const dy = ball.y - boss.y;
   const dist = Math.sqrt(dx * dx + dy * dy);
 
-  if (dist < ball.r + boss.coreRadius) {
-    // Bounce
+  if (dist < ball.r + boss.coreRadius && dist > 0) {
     const nx = dx / dist, ny = dy / dist;
     const dot = ball.vx * nx + ball.vy * ny;
     ball.vx -= 2 * dot * nx;
     ball.vy -= 2 * dot * ny;
 
-    // Damage
     boss.coreHP--;
     emitParticles(boss.x, boss.y, '#fff', 10, 2, 3);
     triggerShake(5);
@@ -1037,20 +1003,6 @@ function ballBossCollision(ball, boss) {
 
     if (boss.coreHP <= 0) {
       defeatBoss(boss);
-    }
-    return;
-  }
-
-  // Bounce off wireframe shell (skip if ball is in a gap)
-  if (Math.abs(dist - boss.radius) < ball.r + 3 && dist > 0) {
-    const ballAngle = Math.atan2(dy, dx);
-    if (!isInShieldGap(ballAngle, boss)) {
-      const nx = dx / dist, ny = dy / dist;
-      const dot = ball.vx * nx + ball.vy * ny;
-      if (dot < 0) {
-        ball.vx -= 2 * dot * nx;
-        ball.vy -= 2 * dot * ny;
-      }
     }
   }
 }
@@ -1077,35 +1029,23 @@ function drawBoss(ctx, drawGlowFn) {
 
   ctx.save();
 
-  // Wireframe shape with gaps
+  // Decorative wireframe shape (no collision)
   ctx.strokeStyle = '#0ff';
   ctx.lineWidth = 1.5;
+  ctx.globalAlpha = 0.3;
   ctx.save();
   ctx.translate(boss.x, boss.y);
   ctx.rotate(boss.rotation);
   const verts = boss.shapeDef.vertices(0, 0, boss.radius);
-  const gaps = getShieldGaps(boss.shape);
   ctx.beginPath();
-  let penDown = false;
-  const totalVerts = verts.length;
-  for (let i = 0; i <= totalVerts; i++) {
-    const v = verts[i % totalVerts];
-    const angle = Math.atan2(v.y, v.x);
-    let inGap = false;
-    for (const gap of gaps) {
-      let diff = angle - gap.angle;
-      diff = ((diff + Math.PI) % (Math.PI * 2) + Math.PI * 2) % (Math.PI * 2) - Math.PI;
-      if (Math.abs(diff) < gap.width / 2) { inGap = true; break; }
-    }
-    if (inGap) {
-      penDown = false;
-    } else {
-      if (!penDown) { ctx.moveTo(v.x, v.y); penDown = true; }
-      else ctx.lineTo(v.x, v.y);
-    }
+  for (let i = 0; i < verts.length; i++) {
+    if (i === 0) ctx.moveTo(verts[i].x, verts[i].y);
+    else ctx.lineTo(verts[i].x, verts[i].y);
   }
+  ctx.closePath();
   ctx.stroke();
   ctx.restore();
+  ctx.globalAlpha = 1;
 
   // Core — pulsing glow
   const pulseAlpha = 0.5 + Math.sin(boss.time * 0.08) * 0.3;
